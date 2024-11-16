@@ -24,7 +24,7 @@ def select_random_column(data):
 # Perform web search using SerpAPI
 def search_web(query, api_key):
     try:
-        query = "Give me email addresses of " + query
+        query = "Give me the name of director of " + query
         url = f"https://serpapi.com/search.json?q={query}&api_key={api_key}"
         response = requests.get(url)
         if response.status_code == 200:
@@ -36,8 +36,7 @@ def search_web(query, api_key):
         print(f"Search failed: {e}")
         return []
 
-# Main function
-def main():
+def get_raw_data():
     # File path
     load_dotenv()
 
@@ -76,10 +75,8 @@ def main():
     search_results = search_web("IIIT Hyderabad", api_key)
     print(search_results)
 
+    return search_results
     # Print the results
     # for result in results:
     #     print(result)
 
-# Run the script
-if __name__ == "__main__":
-    main()
