@@ -49,7 +49,7 @@ def process_data(file=None, credentials=None, sheet_id=None, sheet_name=None, qu
             # print(df)
             # print("krsghvkrgsnker")
             updated_df = process_query_and_update_sheets(credentials.name, df, query_template)
-            update_google_sheet(credentials.name, sheet_id, sheet_name, updated_df)
+            # update_google_sheet(credentials.name, sheet_id, sheet_name, updated_df)
         else:
             return None, "No data source provided"
         
@@ -60,32 +60,57 @@ def process_data(file=None, credentials=None, sheet_id=None, sheet_name=None, qu
     except Exception as e:
         return pd.DataFrame(), str(e)
     
-
+def update_sheet(credentials, sheet_id, sheet_name, processed_df):
+    """
+    Update the Google Sheet with the processed data.
+    """
+    try:
+        update_google_sheet(credentials.name, sheet_id, sheet_name, processed_df)
+        return "Google Sheet updated successfully!"
+    except Exception as e:
+        return str(e)
+    
 # Gradio Interface
 def gradio_app():
-    with gr.Blocks() as app:
+    with gr.Blocks(theme=gr.themes.Ocean()) as app:
         gr.Markdown("### CSV/Google Sheets Query Processor Dashboard")
 
         with gr.Tabs():
             with gr.TabItem("CSV File"):
                 csv_file = gr.File(label="Upload CSV File")
+                preview_output = gr.Dataframe(label="Data Preview")
+                query_template = gr.Textbox(label="Query Template (e.g., 'Get me the name of CEO of {Company}')")
+
+                with gr.Row():
+                    preview_button = gr.Button("Preview Columns")
+                    process_button = gr.Button("Process Queries")
+
+                column_list = gr.Dropdown(label="Available Columns", allow_custom_value=True)
+                processed_output = gr.Dataframe(label="Processed Data")
+                download_button = gr.File(label="Download Processed CSV")
 
             with gr.TabItem("Google Sheets"):
                 credentials = gr.File(label="Google Service Account Credentials (JSON)")
                 sheet_id = gr.Textbox(label="Google Sheet ID")
                 sheet_name = gr.Textbox(label="Google Sheet Name (e.g., Sheet1)")
+                preview_output = gr.Dataframe(label="Data Preview")
+                query_template = gr.Textbox(label="Query Template (e.g., 'Get me the name of CEO of {Company}')")
 
-        query_template = gr.Textbox(label="Query Template (e.g., 'Get me the name of CEO of {Company}')")
+                with gr.Row():
+                    preview_button = gr.Button("Preview Columns")
+                    process_button = gr.Button("Process Queries")
 
-        with gr.Row():
-            preview_button = gr.Button("Preview Columns")
-            process_button = gr.Button("Process Queries")
+                column_list = gr.Dropdown(label="Available Columns", allow_custom_value=True)
+                processed_output = gr.Dataframe(label="Processed Data")
+                download_button = gr.File(label="Download Processed CSV")
 
-        preview_output = gr.Dataframe(label="Data Preview")
-        column_list = gr.Dropdown(label="Available Columns", allow_custom_value=True)
-        processed_output = gr.Dataframe(label="Processed Data")
-        download_button = gr.File(label="Download Processed CSV")
-
+                # Google Sheets-specific button
+                update_button = gr.Button("Update Google Sheet")  # Update button only here
+                update_status = gr.Textbox(label="Update Status", interactive=False)
+        
+        # column_list = gr.Dropdown(label="Available Columns", allow_custom_value=True)
+        # processed_output = gr.Dataframe(label="Processed Data")
+        # download_button = gr.File(label="Download Processed CSV")
 
         # Button Interactions
         preview_button.click(
@@ -96,12 +121,12 @@ def gradio_app():
         process_button.click(
             process_data,
             inputs=[csv_file, credentials, sheet_id, sheet_name, query_template],
-            outputs=[processed_output],
-        )
-        process_button.click(
-            process_data,
-            inputs=[csv_file, credentials, sheet_id, sheet_name, query_template],
             outputs=[processed_output, download_button],
+        )
+        update_button.click(
+            update_sheet,
+            inputs=[credentials, sheet_id, sheet_name, processed_output],
+            outputs=[update_status],  # Update the status after sheet update
         )
 
     return app
