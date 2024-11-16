@@ -49,13 +49,13 @@ def process_data(file=None, credentials=None, sheet_id=None, sheet_name=None, qu
             # print(df)
             # print("krsghvkrgsnker")
             updated_df = process_query_and_update_sheets(credentials.name, df, query_template)
+            update_google_sheet(credentials.name, sheet_id, sheet_name, updated_df)
         else:
             return None, "No data source provided"
         
         # Write DataFrame to a temporary file for download
         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".csv")
         updated_df.to_csv(temp_file.name, index=False)
-        
         return updated_df, temp_file.name  # Return DataFrame and file path
     except Exception as e:
         return pd.DataFrame(), str(e)
