@@ -14,29 +14,34 @@ def process_safety_with_chroma(data):
     Returns:
         Chroma: The Chroma vector store object.
     """
-    if os.path.exists(PERSIST_DIRECTORY):
-        vector_store = Chroma(persist_directory=PERSIST_DIRECTORY, embedding_function=OpenAIEmbeddings())
-    else:
-        documents = []
-        
-        for item in data:
-            # Extract fields from the JSON structure
-            content = item.get("snippet", "")
-            highlighted_words = item.get("snippet_highlighted_words", [])
-            metadata = {
-                "position": item.get("position"),
-                "title": item.get("title"),
-                "link": item.get("link"),
-                "source": item.get("source"),
-                "displayed_link": item.get("displayed_link"),
-                # Flatten highlighted_words list into a comma-separated string
-                "highlighted_words": ", ".join(highlighted_words) if isinstance(highlighted_words, list) else highlighted_words
-            }
+    
+    documents = []
+    # print("machidkkkk\n")
+    for item in data:
+        # print("machidkkkk\n")
+
+        # Extract fields from the JSON structure
+        content = item.get("snippet", "")
+        highlighted_words = item.get("snippet_highlighted_words", [])
+        highlighted_words_str = ", ".join(highlighted_words) if isinstance(highlighted_words, list) else str(highlighted_words)
+
+        metadata = {
+            "position": item.get("position"),
+            "title": item.get("title"),
+            "link": item.get("link"),
+            "source": item.get("source"),
+            "displayed_link": item.get("displayed_link"),
+            # Flatten highlighted_words list into a comma-separated string
+            "highlighted_words": ", ".join(highlighted_words) if isinstance(highlighted_words, list) else highlighted_words
+        }
             # Create a document for each snippet
-            if content:
-                documents.append(Document(page_content=content, metadata=metadata))
-        # Initialize embeddings and Chroma store
-        embeddings = OpenAIEmbeddings()
-        vector_store = Chroma.from_documents(documents, embeddings, persist_directory=PERSIST_DIRECTORY)
+        # print("ffffff")
+        # print ( "content", content)
+        if content:
+            content += f" Highlighted words: {highlighted_words_str}" if highlighted_words_str else ""
+            documents.append(Document(page_content=content, metadata=metadata))
+    # Initialize embeddings and Chroma store
+    embeddings = OpenAIEmbeddings()
+    vector_store = Chroma.from_documents(documents, embeddings, persist_directory=PERSIST_DIRECTORY)
 
     return vector_store

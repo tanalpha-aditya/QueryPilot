@@ -14,17 +14,10 @@ def load_csv(file_path):
         print(f"Error loading file: {e}")
         return None
 
-# Select a random column
-def select_random_column(data):
-    columns = list(data.columns)
-    random_column = random.choice(columns)
-    print(f"Randomly selected column: {random_column}")
-    return random_column
-
 # Perform web search using SerpAPI
 def search_web(query, api_key):
     try:
-        query = "Give me the name of director of " + query
+        # query = "Give me the name of director of " + query
         url = f"https://serpapi.com/search.json?q={query}&api_key={api_key}"
         response = requests.get(url)
         if response.status_code == 200:
@@ -36,11 +29,11 @@ def search_web(query, api_key):
         print(f"Search failed: {e}")
         return []
 
-def get_raw_data():
+def get_raw_data(file_path, query):
     # File path
     load_dotenv()
 
-    file_path = "example_input.csv"  # Replace with your actual file path
+    # file_path = "example_input.csv"  # Replace with your actual file path
     api_key = os.getenv("SERPAPI_KEY")
 
     # Load CSV
@@ -57,23 +50,8 @@ def get_raw_data():
     if data is None:
         return
 
-    # Allow user to input the column name to select
-    selected_column = input(f"Enter the column name from {list(data.columns)} to search: ").strip()
-
-    # Check if the column exists in the dataframe
-    if selected_column not in data.columns:
-        print(f"Error: Column '{selected_column}' not found in the CSV file.")
-        return
-
-    # Perform search for each value in the column
-    # results = []
-    # for value in data[selected_column]:
-    #     print(f"Searching for: {value}")
-    #     search_results = search_web(value, api_key)
-    #     results.append({value: search_results})
-
-    search_results = search_web("IIIT Hyderabad", api_key)
-    print(search_results)
+    search_results = search_web(query, api_key)
+    # print(search_results)
 
     return search_results
     # Print the results

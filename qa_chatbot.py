@@ -11,7 +11,7 @@ def create_chatbot(vector_store):
         RetrievalQA: The QA chatbot object.
     """
     llm = OpenAI(temperature=0.5)
-    retriever = vector_store.as_retriever(search_type="mmr", k=3)
+    retriever = vector_store.as_retriever(search_type="mmr", k=5)
     
     qa = RetrievalQA.from_chain_type(
         llm=llm,
