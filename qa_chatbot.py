@@ -34,6 +34,6 @@ def ask_question(qa, query):
     try:
         response = qa.invoke({"query": query})
         answer = response.get('result', 'No answer found.')
-        return f"Answer: {answer}\n"
+        return f"{answer}\n"
     except Exception as e:
         return f"Error: {e}"

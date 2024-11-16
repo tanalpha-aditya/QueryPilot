@@ -1,3 +1,5 @@
-Company,Query
-Microsoft,Find the email address for Example Corp
-Samsung,Find the contact details for Tech Innovators
+Company,Query,Answer
+Microsoft,Find the email address for Example Corp,"Answer:  The current CEO of Microsoft is Satya Nadella. You can find more information about him and his role at Microsoft on the company's official website: https://www.microsoft.com/en-us/about/our-leadership/satya-nadella
+"
+Samsung,Find the contact details for Tech Innovators,"Answer:  The CEO of Samsung is Kwon Oh-hyun. Here is a link to contact the CEO's office directly: https://www.samsung.com/us/support/contact/.
+"
