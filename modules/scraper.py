@@ -58,3 +58,20 @@ def get_raw_data(file_path, query):
     # for result in results:
     #     print(result)
 
+
+def get_raw_data_sheets(query):
+    # File path
+    load_dotenv()
+
+    # file_path = "example_input.csv"  # Replace with your actual file path
+    api_key = os.getenv("SERPAPI_KEY")
+
+    if not api_key:
+        print("Error: Environment variables not set. Please check your .env file.")
+        return
+
+    search_results = search_web(query, api_key)
+    # print(search_results)
+
+    return search_results
+

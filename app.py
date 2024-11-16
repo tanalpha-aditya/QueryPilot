@@ -1,9 +1,11 @@
 import gradio as gr
-from modules.data_processor import process_query_and_update_csv, extract_column_name
+from modules.data_processor import process_query_and_update_csv, extract_column_name, process_query_and_update_sheets
 from modules.gsheet_handler import fetch_google_sheet_data, update_google_sheet
 import pandas as pd
 import tempfile
-import io
+from google.oauth2.service_account import Credentials
+import json
+import gspread
 
 def preview_columns(file=None, credentials=None, sheet_id=None, sheet_name=None):
     """
@@ -27,10 +29,26 @@ def process_data(file=None, credentials=None, sheet_id=None, sheet_name=None, qu
     """
     try:
         if file:
+            print(file.name)
             updated_df = process_query_and_update_csv(file.name, query_template)
         elif credentials and sheet_id and sheet_name:
+            # credentials_path = credentials.name  # The file path for the credentials JSON
+            
+            # # Use gspread to authenticate and fetch the data
+            # gc = gspread.service_account(credentials_path)  # Pass the path of the credentials file
+            # print("Dddddddddd")
+            # sh = gc.open_by_url(sheet_id)  # Open the Google Sheet by URL
+            # worksheet = sh.worksheet(sheet_name)  # Access the specified worksheet
+            
+            # # Extract all values from the sheet
+            # values = worksheet.get_all_values()
+            # df = pd.DataFrame(values[1:], columns=values[0])
+            # print(df)
             df = fetch_google_sheet_data(credentials.name, sheet_id, sheet_name)
-            updated_df = process_query_and_update_csv(df, query_template)
+            # Process the data with the query template
+            # print(df)
+            # print("krsghvkrgsnker")
+            updated_df = process_query_and_update_sheets(credentials.name, df, query_template)
         else:
             return None, "No data source provided"
         
@@ -64,7 +82,7 @@ def gradio_app():
             process_button = gr.Button("Process Queries")
 
         preview_output = gr.Dataframe(label="Data Preview")
-        column_list = gr.Dropdown(label="Available Columns")
+        column_list = gr.Dropdown(label="Available Columns", allow_custom_value=True)
         processed_output = gr.Dataframe(label="Processed Data")
         download_button = gr.File(label="Download Processed CSV")
 
