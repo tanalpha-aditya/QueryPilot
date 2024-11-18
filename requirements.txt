@@ -1,0 +1,10 @@
+gradio
+pandas
+google-api-python-client
+google-auth
+gspread
+langchain
+langchain-openai
+langchain-chroma
+requests
+python-dotenv
