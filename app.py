@@ -71,9 +71,26 @@ def update_sheet(credentials, sheet_id, sheet_name, processed_df):
         return str(e)
     
 # Gradio Interface
+# Gradio Interface with Information
 def gradio_app():
     with gr.Blocks(theme=gr.themes.Citrus()) as app:
-        gr.Markdown("### CSV/Google Sheets Query Processor Dashboard")
+        # General Information
+        gr.Markdown("""
+        # CSV/Google Sheets Query Processor Dashboard
+        This application allows you to:
+        - Upload a CSV file or connect to a Google Sheet.
+        - Preview the data to understand the structure and available columns.
+        - Process the data by executing query templates that extract or manipulate information.
+        - Download the processed data as a CSV file or update the Google Sheet directly.
+                    
+         **Note**:  
+        This app uses my personal OpenAI API key and SERP API key, which have limited free API calls.  
+        If the app does not work due to API limits, you can:
+        1. Visit the [GitHub Repository](https://github.com/your-repo-url).
+        2. Download the project.
+        3. Use your own API keys to run it locally.
+        For help setting up, refer to the documentation in the GitHub repository.
+        """)
 
         # States to store independent data for CSV and Google Sheets
         csv_data_state = gr.State(None)  # To store CSV data
@@ -81,6 +98,17 @@ def gradio_app():
 
         with gr.Tabs():
             with gr.TabItem("CSV File"):
+                # CSV Tab Information
+                gr.Markdown("""
+                ## **CSV File Operations**
+                1. Upload a CSV file to preview its columns and structure.
+                2. Enter a query template using placeholders like `{ColumnName}` to extract or modify data.
+                3. Process the CSV and download the updated file.
+                **Sample Query Template**:  
+                `Get me the name of the CEO of {Company}`  
+                Replace `{Company}` with the column name containing company names.
+                """)
+
                 csv_file = gr.File(label="Upload CSV File")
                 query_template_csv = gr.Textbox(label="CSV Query Template (e.g., 'Get me the name of CEO of {Company}')")
                 with gr.Row():
@@ -92,10 +120,32 @@ def gradio_app():
                 download_button_csv = gr.File(label="Download Processed CSV")
 
             with gr.TabItem("Google Sheets"):
+                # Google Sheets Tab Information
+                gr.Markdown("""
+                    ## **Google Sheets Operations**  
+                    This section allows you to connect to a Google Sheet and perform data queries.
+                    **Steps to Use**:
+                    1. **Provide Google Service Account Credentials**:
+                        - Create a Service Account in Google Cloud Console.
+                        - Download the Service Account credentials as a JSON file.
+                        - Share the Google Sheet with the Service Account's email (found in the JSON file under `client_email`).
+                    2. **Enter the Google Sheet ID**:
+                        - The Google Sheet ID is the part of the URL between `/d/` and `/edit`, for example:  
+                        `https://docs.google.com/spreadsheets/d/<SheetID>/edit`
+                    3. **Enter the Sheet Name**:
+                        - This is the name of the specific worksheet (tab) within the Google Sheet, e.g., `Sheet1`.
+                    **Example Input**:  
+                    - Google Sheet ID: `1aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789`  
+                    - Sheet Name: `SalesData`
+                    **Sample Query Template**:  
+                    `Get me the revenue of {Product}`  
+                    Replace `{Product}` with the column name containing product names.
+                    """)
+
                 credentials = gr.File(label="Google Service Account Credentials (JSON)")
                 sheet_id = gr.Textbox(label="Google Sheet ID")
                 sheet_name = gr.Textbox(label="Google Sheet Name (e.g., Sheet1)")
-                query_template_sheet = gr.Textbox(label="Google Sheets Query Template (e.g., 'Get me the name of CEO of {Company}')")
+                query_template_sheet = gr.Textbox(label="Google Sheets Query Template (e.g., 'Get me the revenue of {Product}')")
                 with gr.Row():
                     preview_button_sheet = gr.Button("Preview Columns")
                     process_button_sheet = gr.Button("Process Queries")

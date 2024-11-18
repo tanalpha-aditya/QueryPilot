@@ -33,6 +33,7 @@ def process_query_and_update_csv(file_path, query_template):
         
         # Process the query using provided functions
         raw_data = get_raw_data(file_path, query)
+        print(raw_data)
         vector_store = process_safety_with_chroma(raw_data)
         qa_system = create_chatbot(vector_store)
         prompt = f"Give me the exact answer for this below query '{query}' in a structured format with a link from the content provided only."
